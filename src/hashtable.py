@@ -15,6 +15,7 @@ class HashTable:
     def __init__(self, capacity):
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
+        self.size = 0
 
 
     def _hash(self, key):
@@ -23,6 +24,7 @@ class HashTable:
 
         You may replace the Python hash with DJB2 as a stretch goal.
         '''
+        
         return hash(key)
 
 
@@ -50,11 +52,11 @@ class HashTable:
         Part 1: Hash collisions should be handled with an error warning.
 
         Part 2: Change this so that hash collisions are handled with Linked List Chaining.
-
-        Fill this in.
         '''
-        pass
-
+        index = self._hash_mod(key)
+        if self.storage[index] is not None:
+            print("OVERWRITING")
+        self.storage[index] = LinkedPair(key,value)
 
 
     def remove(self, key):
@@ -65,7 +67,11 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
+        if self.storage[index] is None:
+            print("AY u got no key bro")
+            return
+        self.storage[index] = None
 
 
     def retrieve(self, key):
@@ -76,8 +82,15 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
-
+        index = self._hash_mod(key)
+        if self.storage[index] is not None:
+            if self.storage[index].key == key:
+                return self.storage[index].value
+            else:
+                print("KEY DONT MATCHs")
+                return None
+        else:
+            return None
 
     def resize(self):
         '''
@@ -86,7 +99,13 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        self.capacity *= 2
+        new_storage = [None] * self.capacity
+        for bucket_item in self.storage:
+            if bucket_item is not None:
+                new_index = self._hash_mod(bucket_item.key)
+                new_storage[new_index] = LinkedPair(bucket_item.key,bucket_item.value)
+        self.storage = new_storage
 
 
 
